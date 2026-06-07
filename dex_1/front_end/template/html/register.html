@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت‌نام | EZ Dex</title>
+    <link rel="stylesheet" href="/dex_1/static/css/main.css">
+    <link rel="stylesheet" href="/dex_1/static/css/register.css">
+</head>
+<body>
+    <div class="dex-container">
+        <!-- هدر -->
+        <div class="dex-header">
+            <div class="logo">
+                <span></span>
+                <span>Ez<span class="highlight">Dex</span></span>
+            </div>
+            <nav class="main-nav">
+                <a href="/dex_1/">🏠 خانه</a>
+                <a href="/dex_1/contact">📞 تماس</a>
+                <a href="/dex_1/register" class="active">📝 ثبت‌نام</a>
+                <a href="/dex_1/create_pool">➕ استخر جدید</a>
+            </nav>
+            <button class="connect-wallet-btn" id="connectWalletBtn">
+                <span>🔗</span> <span>اتصال کیف پول</span>
+            </button>
+        </div>
+
+        <!-- فرم ثبت‌نام -->
+        <div class="register-main">
+            <div class="register-card">
+                <div class="card-title">
+                    <span>📋</span>
+                    <h1>ایجاد حساب کاربری</h1>
+                    <p>برای دسترسی به امکانات ویژه (استخر نقدینگی، درج توکن) کیف پول خود را متصل کرده و اطلاعات را تکمیل کنید.</p>
+                </div>
+
+                <!-- وضعیت کیف پول -->
+                <div class="wallet-box">
+                    <div>🔗 وضعیت:</div>
+                    <strong id="walletStatus">اتصال نشده</strong>
+                    <button type="button" id="forceConnectBtn" class="btn-link">اتصال مجدد</button>
+                </div>
+                <input type="hidden" id="walletAddress">
+
+                <form id="registerForm">
+                    <div class="field">
+                        <label>👤 نام کاربری <span class="required">*</span></label>
+                        <input type="text" id="username" placeholder="مثال: Satoshi" autocomplete="off">
+                        <small>فقط حروف انگلیسی، اعداد و زیرخط</small>
+                    </div>
+                    <div class="field">
+                        <label>📧 ایمیل <span class="required">*</span></label>
+                        <input type="email" id="email" placeholder="your@email.com">
+                        <small>برای اطلاع‌رسانی و بازیابی</small>
+                    </div>
+                    <div class="field">
+                        <label>🎭 نوع حساب</label>
+                        <select id="role">
+                            <option value="user">کاربر عادی</option>
+                            <option value="liquidity_provider">تأمین‌کننده نقدینگی</option>
+                            <option value="trader">معامله‌گر حرفه‌ای</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" id="submitBtn" disabled>
+                        ✅ ثبت‌نام
+                    </button>
+                    <div id="formStatus" class="status-message"></div>
+                </form>
+            </div>
+
+            <!-- بخش اطلاعات جانبی -->
+            <div class="register-sidebar">
+                <div class="info-card">
+                    <h3>🛡️ امنیت غیرمتمرکز</h3>
+                    <p>کلیدهای شما هرگز در سرور ذخیره نمی‌شود.</p>
+                </div>
+                <div class="info-card">
+                    <h3>💰 کارمزد پایین</h3>
+                    <p>کمترین کارمزد در میان دکس‌ها.</p>
+                </div>
+                <div class="info-card">
+                    <h3>🎧 پشتیبانی ۲۴/۷</h3>
+                    <p>تیم ما همیشه پاسخگو است.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="dex-footer">
+            <p>© 2025 EZ Dex | تمامی حقوق محفوظ است.</p>
+            <div class="footer-links">
+                <a href="#">شرایط</a>
+                <a href="#">حریم خصوصی</a>
+                <a href="#">قراردادها</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="/dex_1/static/js/register.js"></script>
+</body>
+</html>

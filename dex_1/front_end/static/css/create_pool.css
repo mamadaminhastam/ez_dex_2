@@ -1,0 +1,140 @@
+/* front_end/static/css/create_pool.css */
+
+.pool-main {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+}
+
+.pool-card {
+    flex: 2;
+    min-width: 280px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 2rem;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1.8rem;
+}
+
+.title span {
+    font-size: 2.8rem;
+}
+
+.title h1 {
+    font-size: 1.8rem;
+    margin: 0.5rem 0;
+}
+
+.title p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.wallet-status {
+    background: #0f111a;
+    border-radius: 20px;
+    padding: 0.6rem 1.2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border);
+}
+
+.wallet-status strong {
+    color: var(--accent);
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.8rem;
+}
+
+.link-btn:hover {
+    text-decoration: underline;
+}
+
+.field {
+    margin-bottom: 1.5rem;
+}
+
+.field label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.field input {
+    width: 100%;
+    background: #0f111a;
+    border: 1px solid var(--border);
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    font-size: 0.95rem;
+    transition: var(--transition);
+    font-family: inherit;
+}
+
+.field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.2);
+}
+
+.field small {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-top: 0.3rem;
+}
+
+.pool-sidebar {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.info-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.info-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+}
+
+.info-card p,
+.info-card ul {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.info-card ul {
+    padding-right: 1.2rem;
+}
+
+.info-card li {
+    margin-bottom: 0.4rem;
+}
