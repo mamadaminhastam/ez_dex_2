@@ -9,7 +9,8 @@ def init_db():
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            wallet_address TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            wallet_address TEXT UNIQUE,
             username TEXT UNIQUE NOT NULL,
             email TEXT NOT NULL,
             role TEXT DEFAULT 'user',
@@ -236,14 +237,14 @@ def route(path, method, body):
 
     # ---------- API های POST ----------
     if method == "POST":
-        if path == "/api/register":
+         if path == "/api/register":
             try:
                 data = json.loads(body) if body else {}
             except json.JSONDecodeError:
                 return error_response(400, "JSON نامعتبر")
 
             wallet = data.get("wallet_address")
-            wallet = wallet.strip() if wallet else ""
+            wallet = wallet.strip() if wallet else None   # میتونه None باشه
             username = data.get("username")
             username = username.strip() if username else ""
             email = data.get("email")
@@ -253,22 +254,24 @@ def route(path, method, body):
             if not username or not email:
                 return error_response(400, "نام کاربری و ایمیل الزامی است")
 
-            if not wallet:
-                wallet = None
-
             try:
                 init_db()
                 conn = sqlite3.connect(settings.DATABASE_FILE)
                 cur = conn.cursor()
-                cur.execute("SELECT username FROM users WHERE username = ?", (username,))
+
+                # چک نام کاربری تکراری
+                cur.execute("SELECT id FROM users WHERE username = ?", (username,))
                 if cur.fetchone():
                     conn.close()
                     return error_response(409, "این نام کاربری قبلاً گرفته شده است")
+
+                # اگر wallet وارد شده، یکتا بودن آن را چک کن
                 if wallet:
-                    cur.execute("SELECT wallet_address FROM users WHERE wallet_address = ?", (wallet,))
+                    cur.execute("SELECT id FROM users WHERE wallet_address = ?", (wallet,))
                     if cur.fetchone():
                         conn.close()
                         return error_response(409, "این کیف پول قبلاً ثبت‌نام کرده است")
+
                 cur.execute(
                     "INSERT INTO users (wallet_address, username, email, role) VALUES (?,?,?,?)",
                     (wallet, username, email, role)
@@ -279,7 +282,7 @@ def route(path, method, body):
             except sqlite3.Error as e:
                 return error_response(500, f"خطای دیتابیس: {str(e)}")
 
-        elif path == "/api/contact":
+    elif path == "/api/contact":
             try:
                 data = json.loads(body) if body else {}
             except json.JSONDecodeError:
@@ -300,7 +303,7 @@ def route(path, method, body):
             conn.close()
             return success_response({"status": "success"})
 
-        elif path == "/api/create_pool":
+    elif path == "/api/create_pool":
             try:
                 data = json.loads(body) if body else {}
             except json.JSONDecodeError:

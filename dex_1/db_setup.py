@@ -1,28 +1,25 @@
+# dex_1/db_setup.py
 import sqlite3
 import os
 
-# نام فایل دیتابیس (می‌توانید مسیر دلخواه بدهید)
 DATABASE_FILE = 'dex.db'
 
 def setup_database():
-    """ایجاد دیتابیس و جداول مورد نیاز صرافی غیرمتمرکز"""
-    
-    # اتصال به دیتابیس (اگر فایل نباشد، ساخته می‌شود)
     conn = sqlite3.connect(DATABASE_FILE)
     cursor = conn.cursor()
-    
-    # 1. جدول users (کاربران／کیف پول‌ها)
+
+    # users با کلید اصلی id و wallet_address اختیاری
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            wallet_address TEXT PRIMARY KEY,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            wallet_address TEXT UNIQUE,
             username TEXT UNIQUE NOT NULL,
             email TEXT NOT NULL,
             role TEXT DEFAULT 'user',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    
-    # 2. جدول contact_messages (پیام‌های تماس با ما)
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS contact_messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,8 +30,7 @@ def setup_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    
-    # 3. جدول liquidity_pools (استخرهای نقدینگی / محصولات)
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS liquidity_pools (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,8 +46,7 @@ def setup_database():
             FOREIGN KEY (creator_wallet) REFERENCES users(wallet_address) ON DELETE CASCADE
         )
     ''')
-    
-    # (اختیاری) جدول tokens برای ذخیره متادیتای توکن‌ها
+
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS tokens (
             address TEXT PRIMARY KEY,
@@ -62,13 +57,10 @@ def setup_database():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
-    
+
     conn.commit()
     conn.close()
-    
-    print(f"['the {DATABASE_FILE}' created ")
-    print("    tables: users, contact_messages, liquidity_pools, tokens")
+    print(f"[✓] دیتابیس '{DATABASE_FILE}' با جداول جدید ساخته شد.")
 
 if __name__ == '__main__':
-    # اگر فایل دیتابیس از قبل موجود باشد، جداول جدید اضافه می‌شوند (IF NOT EXISTS)
     setup_database()

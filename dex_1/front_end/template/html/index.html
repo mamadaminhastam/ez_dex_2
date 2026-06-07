@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ez Dex - صرافی غیرمتمرکز</title>
+    <link rel="stylesheet" href="/dex_1/static/css/main.css">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .actions a {
+            background: var(--primary);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .actions a.secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+        }
+        .actions a:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        .admin-links {
+            margin-top: 3rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .admin-links a {
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+        .admin-links a:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="dex-container">
+        <header class="dex-header">
+            <div class="logo">
+                <span></span>
+                <span>Ez<span class="highlight">Dex</span></span>
+            </div>
+            <nav class="main-nav">
+                <a href="/dex_1/" class="active">🏠 خانه</a>
+                <a href="/dex_1/contact">📞 تماس</a>
+                <a href="/dex_1/register">📝 ثبت‌نام</a>
+                <a href="/dex_1/create_pool">➕ استخر جدید</a>
+            </nav>
+            <button class="connect-wallet-btn" onclick="alert('اتصال ولت در صفحات مربوطه انجام می‌شود')">
+                <span>🔗</span> <span>اتصال کیف پول</span>
+            </button>
+        </header>
+
+        <main>
+            <div class="hero">
+                <h1>به <span class="highlight">Ez Dex</span> خوش آمدید</h1>
+                <p>صرافی غیرمتمرکز نسل جدید با کارمزد صفر و امنیت بالا. همین حالا کیف پول خود را متصل کنید و معامله را شروع کنید.</p>
+                <div class="actions">
+                    <a href="/dex_1/register">📝 ثبت‌نام سریع</a>
+                    <a href="/dex_1/create_pool" class="secondary">➕ ایجاد استخر نقدینگی</a>
+                </div>
+            </div>
+
+            <div class="admin-links">
+                <a href="/dex_1/admin/users">👥 لیست کاربران</a>
+                <a href="/dex_1/admin/messages">✉️ پیام‌های تماس</a>
+                <a href="/dex_1/admin/pools">💧 استخرهای نقدینگی</a>
+            </div>
+        </main>
+
+        <footer class="dex-footer">
+            <p>© 2025 Ez Dex - تمامی حقوق محفوظ است.</p>
+            <div class="footer-links">
+                <a href="#">شرایط استفاده</a>
+                <a href="#">حریم خصوصی</a>
+                <a href="#">قراردادهای هوشمند</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>
