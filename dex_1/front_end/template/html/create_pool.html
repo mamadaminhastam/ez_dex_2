@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="/dex_1/static/css/main.css">
     <link rel="stylesheet" href="/dex_1/static/css/create_pool.css">
 </head>
+
 <body>
     <div class="dex-container">
         <header class="dex-header">
@@ -19,8 +21,8 @@
                 <a href="/dex_1/contact">📞 تماس</a>
                 <a href="/dex_1/register">📝 ثبت‌نام</a>
                 <a href="/dex_1/create_pool" class="active">➕ استخر جدید</a>
+                <a href="/dex_1/catalog">🛒 کاتالوگ</a>
             </nav>
-            <button class="connect-wallet-btn" id="connectWalletBtn">🔗 اتصال کیف پول</button>
         </header>
 
         <div class="pool-main">
@@ -30,13 +32,6 @@
                     <h1>ایجاد استخر نقدینگی جدید</h1>
                     <p>با ایجاد استخر، تأمین‌کنندگان نقدینگی می‌توانند در آن مشارکت کنند و کارمزد دریافت نمایند.</p>
                 </div>
-
-                <div class="wallet-status">
-                    <span>🔗 کیف پول:</span>
-                    <strong id="walletAddressDisplay">اتصال نشده</strong>
-                    <button type="button" id="forceConnectBtn" class="link-btn">اتصال مجدد</button>
-                </div>
-                <input type="hidden" id="walletAddressInput">
 
                 <form id="createPoolForm">
                     <div class="field">
@@ -67,8 +62,13 @@
                         <label>🏷️ نماد توکن دوم (اختیاری)</label>
                         <input type="text" id="symbol1" placeholder="مثلاً USDC">
                     </div>
+                    <div class="field">
+                        <label>🔗 آدرس کیف پول (اختیاری)</label>
+                        <input type="text" id="walletAddress" placeholder="0x...">
+                        <small>اگر می‌خواهید استخر به حساب شما متصل شود، آدرس ولت ثبت‌نام شده را وارد کنید</small>
+                    </div>
 
-                    <button type="submit" class="btn-submit" id="submitBtn" disabled>✅ ایجاد استخر</button>
+                    <button type="submit" class="btn-submit" id="submitBtn">✅ ایجاد استخر</button>
                     <div id="formStatus" class="status-message"></div>
                 </form>
             </div>
@@ -76,15 +76,16 @@
             <aside class="pool-sidebar">
                 <div class="info-card">
                     <h3>📘 راهنمای ایجاد استخر</h3>
-                    <p>برای ایجاد یک استخر نقدینگی جدید در EZ Dex، آدرس قراردادهای هر دو توکن معتبر را وارد کنید. نرخ اولیه تعیین‌کننده قیمت اولیه جفت ارز است.</p>
-                    <p>⚠️ فقط کاربرانی که نقش ادمین یا تأمین‌کننده نقدینگی مجاز دارند می‌توانند استخر بسازند.</p>
+                    <p>برای ایجاد یک استخر نقدینگی جدید، آدرس قراردادهای هر دو توکن معتبر را وارد کنید. نرخ اولیه
+                        تعیین‌کننده قیمت اولیه جفت ارز است.</p>
+                    <p>⚠️ درج آدرس ولت اختیاری است؛ در صورت وارد کردن، باید قبلاً در سایت ثبت‌نام کرده باشید.</p>
                 </div>
                 <div class="info-card">
                     <h3>⚙️ نکات مهم</h3>
                     <ul>
                         <li>هر دو توکن باید در شبکه بلاکچین معتبر باشند.</li>
                         <li>استخرهای تکراری مجاز نیستند.</li>
-                        <li>بعد از ایجاد، استخر در لیست استخرها نمایش داده می‌شود.</li>
+                        <li>بعد از ایجاد، استخر در کاتالوگ نمایش داده می‌شود.</li>
                     </ul>
                 </div>
             </aside>
@@ -102,4 +103,5 @@
 
     <script src="/dex_1/static/js/create_pool.js"></script>
 </body>
+
 </html>

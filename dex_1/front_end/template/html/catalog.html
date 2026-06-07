@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>کاتالوگ استخرهای نقدینگی | Ez Dex</title>
+    <link rel="stylesheet" href="/dex_1/static/css/main.css">
+    <style>
+        .catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .pool-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .pool-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .pool-symbols {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pool-rate {
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .pool-info {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .pool-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .badge {
+            background: rgba(72, 187, 120, 0.2);
+            color: var(--success);
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+
+        .badge.inactive {
+            background: rgba(245, 101, 101, 0.2);
+            color: var(--danger);
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            margin: 3rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dex-container">
+        <header class="dex-header">
+            <div class="logo">
+                <span></span>
+                <span>Ez<span class="highlight">Dex</span></span>
+            </div>
+            <nav class="main-nav">
+                <a href="/dex_1/">🏠 خانه</a>
+                <a href="/dex_1/contact">📞 تماس</a>
+                <a href="/dex_1/register">📝 ثبت‌نام</a>
+                <a href="/dex_1/create_pool">➕ استخر جدید</a>
+                <a href="/dex_1/catalog" class="active">🛒 کاتالوگ</a>
+            </nav>
+            <button class="connect-wallet-btn" onclick="alert('اتصال ولت در صفحات مربوطه انجام می‌شود')">
+                🔗 اتصال کیف پول
+            </button>
+        </header>
+
+        <main>
+            <h2>📦 کاتالوگ استخرهای نقدینگی</h2>
+            <div id="catalogContainer" class="catalog-grid">
+                <div class="empty-msg">در حال بارگذاری...</div>
+            </div>
+        </main>
+
+        <footer class="dex-footer">
+            <p>© 2025 Ez Dex - تمامی حقوق محفوظ است.</p>
+            <div class="footer-links">
+                <a href="#">شرایط استفاده</a>
+                <a href="#">حریم خصوصی</a>
+                <a href="#">قراردادهای هوشمند</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        async function loadCatalog() {
+            const container = document.getElementById('catalogContainer');
+            try {
+                const res = await fetch('/dex_1/api/pools');
+                const pools = await res.json();
+                if (!Array.isArray(pools) || pools.length === 0) {
+                    container.innerHTML = '<div class="empty-msg">هنوز استخری ایجاد نشده است.</div>';
+                    return;
+                }
+                container.innerHTML = pools.map(pool => `
+                    <div class="pool-card">
+                        <div class="pool-symbols">
+                            <span>🪙 ${pool.token0_symbol}</span>
+                            <span>/</span>
+                            <span>🪙 ${pool.token1_symbol}</span>
+                        </div>
+                        <div class="pool-rate">💰 ${pool.rate}</div>
+                        <div class="pool-info">
+                            نقدینگی اولیه: ${pool.liquidity}<br>
+                            سازنده: <span style="font-family:monospace;font-size:0.75rem;">${pool.creator.slice(0, 10)}...</span>
+                        </div>
+                        <div class="pool-footer">
+                            <span class="${pool.is_active ? 'badge' : 'badge inactive'}">
+                                ${pool.is_active ? 'فعال' : 'غیرفعال'}
+                            </span>
+                            <small class="pool-info">${new Date(pool.created_at).toLocaleDateString('fa-IR')}</small>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                container.innerHTML = '<div class="empty-msg">خطا در بارگذاری اطلاعات</div>';
+                console.error(err);
+            }
+        }
+        loadCatalog();
+    </script>
+</body>
+
+</html>

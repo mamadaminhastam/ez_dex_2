@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Ez Dex</title>
+    <link rel="stylesheet" href="/dex_1/static/css/main.css">
+    {{extra_css}}
+</head>
+
+<body>
+    <div class="dex-container">
+        <header class="dex-header">
+            <div class="logo">
+                <span></span>
+                <span>Ez<span class="highlight">Dex</span></span>
+            </div>
+            <nav class="main-nav">
+                {{navigation}}
+            </nav>
+            <button class="connect-wallet-btn" onclick="alert('اتصال ولت در صفحات مربوطه انجام می‌شود')">
+                <span>🔗</span> <span>اتصال کیف پول</span>
+            </button>
+        </header>
+
+        <main>
+            {{content}}
+        </main>
+
+        <footer class="dex-footer">
+            <p>© 2025 Ez Dex - تمامی حقوق محفوظ است.</p>
+            <div class="footer-links">
+                <a href="#">شرایط استفاده</a>
+                <a href="#">حریم خصوصی</a>
+                <a href="#">قراردادهای هوشمند</a>
+            </div>
+        </footer>
+    </div>
+    {{extra_js}}
+</body>
+
+</html>

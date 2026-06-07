@@ -4,11 +4,13 @@ import os
 
 DATABASE_FILE = 'dex.db'
 
+
 def setup_database():
     conn = sqlite3.connect(DATABASE_FILE)
+    # فعال کردن WAL mode برای جلوگیری از قفل‌شدن در خواندن/نوشتن همزمان
+    conn.execute("PRAGMA journal_mode=WAL;")
     cursor = conn.cursor()
 
-    # users با کلید اصلی id و wallet_address اختیاری
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,10 +42,10 @@ def setup_database():
             token1_symbol TEXT,
             initial_rate TEXT NOT NULL,
             initial_liquidity TEXT,
-            creator_wallet TEXT NOT NULL,
+            creator_wallet TEXT,   -- ← ولت اختیاری شد (حذف NOT NULL)
             is_active INTEGER DEFAULT 1,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (creator_wallet) REFERENCES users(wallet_address) ON DELETE CASCADE
+            FOREIGN KEY (creator_wallet) REFERENCES users(wallet_address) ON DELETE SET NULL
         )
     ''')
 
@@ -62,5 +64,10 @@ def setup_database():
     conn.close()
     print(f"[✓] دیتابیس '{DATABASE_FILE}' با جداول جدید ساخته شد.")
 
+
 if __name__ == '__main__':
+    # اگر فایل قبلی وجود داشت، پاک شود (اختیاری)
+    if os.path.exists(DATABASE_FILE):
+        os.remove(DATABASE_FILE)
+        print("[!] دیتابیس قبلی حذف شد.")
     setup_database()
