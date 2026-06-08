@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش کاربر | Ez Dex</title>
+    <link rel="stylesheet" href="/dex_1/static/css/main.css">
+    <link rel="stylesheet" href="/dex_1/static/css/register.css">
+    <style>
+        .status-message { margin-top: 1rem; }
+        .loading { text-align: center; color: var(--text-muted); padding: 2rem; }
+    </style>
+</head>
+<body>
+    <div class="dex-container">
+        <header class="dex-header">
+            <div class="logo">
+                <span></span>
+                <span>Ez<span class="highlight">Dex</span></span>
+            </div>
+            <nav class="main-nav">
+                <a href="/dex_1/">🏠 خانه</a>
+                <a href="/dex_1/contact">📞 تماس</a>
+                <a href="/dex_1/register">📝 ثبت‌نام</a>
+                <a href="/dex_1/create_pool">➕ استخر جدید</a>
+                <a href="/dex_1/catalog">🛒 کاتالوگ</a>
+            </nav>
+        </header>
+
+        <main>
+            <div class="register-card" style="max-width: 600px; margin: 0 auto;">
+                <div class="card-title">
+                    <h2>✏️ ویرایش کاربر</h2>
+                    <p>شناسه کاربر: <strong id="userIdDisplay">۱</strong></p>
+                </div>
+                <div id="loadingMsg" class="loading">در حال بارگیری اطلاعات...</div>
+
+                <form id="editForm" style="display: none;">
+                    <input type="hidden" id="userId" value="1">
+                    
+                    <div class="field">
+                        <label>👤 نام کاربری <span class="required">*</span></label>
+                        <input type="text" id="username" required>
+                        <small>فقط حروف انگلیسی، اعداد و زیرخط</small>
+                    </div>
+                    <div class="field">
+                        <label>📧 ایمیل <span class="required">*</span></label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="field">
+                        <label>🎭 نوع حساب</label>
+                        <select id="role">
+                            <option value="user">کاربر عادی</option>
+                            <option value="liquidity_provider">تأمین‌کننده نقدینگی</option>
+                            <option value="trader">معامله‌گر حرفه‌ای</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>🔗 آدرس کیف پول (اختیاری)</label>
+                        <input type="text" id="walletAddress" placeholder="0x...">
+                        <small>در صورت وارد کردن، باید یکتا باشد</small>
+                    </div>
+                    <button type="submit" class="btn-submit">💾 ذخیره تغییرات</button>
+                    <div id="formStatus" class="status-message"></div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="dex-footer">
+            <p>© 2025 Ez Dex - تمامی حقوق محفوظ است.</p>
+        </footer>
+    </div>
+
+    <script>
+        const userId = 1; // طبق تکلیف همیشه ۱
+
+        async function loadUser() {
+            const loading = document.getElementById('loadingMsg');
+            const form = document.getElementById('editForm');
+            try {
+                const res = await fetch(`/dex_1/api/user/${userId}`);
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'خطا در دریافت اطلاعات');
+                }
+                const user = await res.json();
+                
+                document.getElementById('username').value = user.username || '';
+                document.getElementById('email').value = user.email || '';
+                document.getElementById('role').value = user.role || 'user';
+                document.getElementById('walletAddress').value = user.wallet_address || '';
+                
+                loading.style.display = 'none';
+                form.style.display = 'block';
+            } catch (err) {
+                loading.innerHTML = `<div class="error">❌ ${err.message}</div>`;
+                console.error(err);
+            }
+        }
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const statusDiv = document.getElementById('formStatus');
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const role = document.getElementById('role').value;
+            const wallet = document.getElementById('walletAddress').value.trim();
+
+            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                statusDiv.innerHTML = 'نام کاربری نامعتبر (فقط حروف انگلیسی، اعداد و _)';
+                statusDiv.className = 'status-message error';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ در حال ذخیره...';
+
+            try {
+                const res = await fetch('/dex_1/api/update_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: userId,
+                        username,
+                        email,
+                        role,
+                        wallet_address: wallet || null
+                    })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    statusDiv.innerHTML = '✅ ' + (data.message || 'تغییرات ذخیره شد');
+                    statusDiv.className = 'status-message success';
+                } else {
+                    statusDiv.innerHTML = '❌ ' + (data.error || 'خطا در ذخیره');
+                    statusDiv.className = 'status-message error';
+                }
+            } catch (err) {
+                statusDiv.innerHTML = '❌ خطای شبکه';
+                statusDiv.className = 'status-message error';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 ذخیره تغییرات';
+            }
+        });
+
+        loadUser();
+    </script>
+</body>
+</html>

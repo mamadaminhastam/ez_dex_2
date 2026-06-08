@@ -11,7 +11,7 @@ def get_db_connection():
     """ایجاد اتصال امن با timeout و WAL mode"""
     conn = sqlite3.connect(settings.DATABASE_FILE, timeout=10)
     conn.execute("PRAGMA journal_mode=WAL;")
-    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row   # دسترسی به ستون‌ها با نام
     return conn
 
 
@@ -144,8 +144,13 @@ def route(path, method, body):
             if html_path.exists():
                 return (html_path.read_text(encoding="utf-8"), 200,
                         {"Content-Type": "text/html; charset=utf-8"})
+        elif path == "/edit_user":
+            html_path = settings.TEMPLATES_DIR / "edit_user.html"
+            if html_path.exists():
+                return (html_path.read_text(encoding="utf-8"), 200,
+                        {"Content-Type": "text/html; charset=utf-8"})
 
-        # جداول مدیریتی (با اتصال امن و finally)
+        # جداول مدیریتی
         elif path == "/admin/users":
             conn = None
             try:
@@ -200,6 +205,58 @@ def route(path, method, body):
                     html += f"<tr><td>{row['id']}</td><td>{row['token0_symbol'] or '-'}</td><td>{row['token1_symbol'] or '-'}</td><td>{row['initial_rate']}</td><td>{row['initial_liquidity'] or '-'}</td><td>{row['creator_wallet'] or '-'}</td><td>{status}</td><td>{row['created_at']}</td></tr>"
                 html += """</tbody></table><br><a href="/dex_1/">🔙 بازگشت به خانه</a></div></body></html>"""
                 return (html, 200, {"Content-Type": "text/html; charset=utf-8"})
+            finally:
+                if conn:
+                    conn.close()
+
+        # API دریافت استخرها (برای کاتالوگ) - اینجا باید باشد!
+        elif path == "/api/pools":
+            conn = None
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute("""
+                    SELECT id, token0_symbol, token1_symbol, initial_rate, 
+                           initial_liquidity, creator_wallet, is_active, created_at
+                    FROM liquidity_pools
+                    ORDER BY created_at DESC
+                """)
+                rows = cur.fetchall()
+                pools = []
+                for r in rows:
+                    pools.append({
+                        "id": r["id"],
+                        "token0_symbol": r["token0_symbol"] or "???",
+                        "token1_symbol": r["token1_symbol"] or "???",
+                        "rate": r["initial_rate"],
+                        "liquidity": r["initial_liquidity"] or "—",
+                        "creator": r["creator_wallet"] or "ناشناس",
+                        "is_active": bool(r["is_active"]),
+                        "created_at": r["created_at"]
+                    })
+                return success_response(pools)
+            except sqlite3.Error as e:
+                return error_response(500, f"خطای دیتابیس: {str(e)}")
+            finally:
+                if conn:
+                    conn.close()
+                # API دریافت یک کاربر با شناسه
+        elif path.startswith("/api/user/"):
+            user_id = path.split("/")[-1]
+            if not user_id.isdigit():
+                return error_response(400, "شناسه کاربر نامعتبر")
+            conn = None
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT id, wallet_address, username, email, role FROM users WHERE id = ?", (int(user_id),))
+                user = cur.fetchone()
+                if not user:
+                    return error_response(404, "کاربر یافت نشد")
+                return success_response(dict(user))
+            except sqlite3.Error as e:
+                return error_response(500, f"خطای دیتابیس: {str(e)}")
             finally:
                 if conn:
                     conn.close()
@@ -316,34 +373,45 @@ def route(path, method, body):
             finally:
                 if conn:
                     conn.close()
+            # API ویرایش کاربر
+        elif path == "/api/update_user":
+            try:
+                data = json.loads(body) if body else {}
+            except json.JSONDecodeError:
+                return error_response(400, "JSON نامعتبر")
 
-        # API دریافت لیست استخرها (برای کاتالوگ) - GET به صورت POST? بهتره GET باشه ولی با POST هم اوکیه
-        # اینجا به صورت POST نگهش می‌داریم ولی اگر خواستی می‌تونی به GET انتقال بدی
-        elif path == "/api/pools":
+            user_id = data.get("id")
+            username = (data.get("username") or "").strip()
+            email = (data.get("email") or "").strip()
+            role = data.get("role", "user")
+            wallet = (data.get("wallet_address") or "").strip()
+            wallet = wallet if wallet else None
+
+            if not user_id or not username or not email:
+                return error_response(400, "شناسه، نام کاربری و ایمیل الزامی است")
+
             conn = None
             try:
                 conn = get_db_connection()
                 cur = conn.cursor()
+                # یکتا بودن نام کاربری (به جز خود کاربر)
+                cur.execute(
+                    "SELECT id FROM users WHERE username = ? AND id != ?", (username, int(user_id)))
+                if cur.fetchone():
+                    return error_response(409, "این نام کاربری قبلاً استفاده شده است")
+                if wallet:
+                    cur.execute(
+                        "SELECT id FROM users WHERE wallet_address = ? AND id != ?", (wallet, int(user_id)))
+                    if cur.fetchone():
+                        return error_response(409, "این آدرس کیف پول قبلاً ثبت شده است")
+
                 cur.execute("""
-                    SELECT id, token0_symbol, token1_symbol, initial_rate, 
-                           initial_liquidity, creator_wallet, is_active, created_at
-                    FROM liquidity_pools
-                    ORDER BY created_at DESC
-                """)
-                rows = cur.fetchall()
-                pools = []
-                for r in rows:
-                    pools.append({
-                        "id": r["id"],
-                        "token0_symbol": r["token0_symbol"] or "???",
-                        "token1_symbol": r["token1_symbol"] or "???",
-                        "rate": r["initial_rate"],
-                        "liquidity": r["initial_liquidity"] or "—",
-                        "creator": r["creator_wallet"] or "ناشناس",
-                        "is_active": bool(r["is_active"]),
-                        "created_at": r["created_at"]
-                    })
-                return success_response(pools)
+                    UPDATE users 
+                    SET wallet_address = ?, username = ?, email = ?, role = ?
+                    WHERE id = ?
+                """, (wallet, username, email, role, int(user_id)))
+                conn.commit()
+                return success_response({"status": "success", "message": "ویرایش کاربر موفق"})
             except sqlite3.Error as e:
                 return error_response(500, f"خطای دیتابیس: {str(e)}")
             finally:
