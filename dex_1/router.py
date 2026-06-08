@@ -49,7 +49,7 @@ def init_db():
                 token1_symbol TEXT,
                 initial_rate TEXT NOT NULL,
                 initial_liquidity TEXT,
-                creator_wallet TEXT,   -- ولت اختیاری (بدون NOT NULL)
+                creator_wallet TEXT,   -- ولت اختیاری
                 is_active INTEGER DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (creator_wallet) REFERENCES users(wallet_address) ON DELETE SET NULL
@@ -149,6 +149,11 @@ def route(path, method, body):
             if html_path.exists():
                 return (html_path.read_text(encoding="utf-8"), 200,
                         {"Content-Type": "text/html; charset=utf-8"})
+        elif path == "/edit_pool":
+            html_path = settings.TEMPLATES_DIR / "edit_pool.html"
+            if html_path.exists():
+                return (html_path.read_text(encoding="utf-8"), 200,
+                        {"Content-Type": "text/html; charset=utf-8"})
 
         # جداول مدیریتی
         elif path == "/admin/users":
@@ -157,13 +162,21 @@ def route(path, method, body):
                 conn = get_db_connection()
                 cur = conn.cursor()
                 cur.execute(
-                    "SELECT wallet_address, username, email, role, created_at FROM users ORDER BY created_at DESC")
+                    "SELECT id, wallet_address, username, email, role, created_at FROM users ORDER BY created_at DESC")
                 users = cur.fetchall()
                 html = """<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>مدیریت کاربران</title>
                 <link rel="stylesheet" href="/static/css/main.css"><style>.data-table{width:100%;border-collapse:collapse;margin:20px 0;direction:rtl}.data-table th,.data-table td{border:1px solid #ddd;padding:10px;text-align:right}.data-table th{background-color:#2a2e3a;color:white}</style></head>
-                <body><div class="dex-container"><h2>📋 لیست کاربران</h2><table class="data-table"><thead><tr><th>آدرس کیف پول</th><th>نام کاربری</th><th>ایمیل</th><th>نقش</th><th>تاریخ ثبت</th></tr></thead><tbody>"""
+                <body><div class="dex-container"><h2>📋 لیست کاربران</h2><table class="data-table"><thead><tr><th>ID</th><th>آدرس کیف پول</th><th>نام کاربری</th><th>ایمیل</th><th>نقش</th><th>تاریخ ثبت</th><th>عملیات</th></tr></thead><tbody>"""
                 for row in users:
-                    html += f"<tr><td>{row['wallet_address'] or '-'}</td><td>{row['username']}</td><td>{row['email']}</td><td>{row['role']}</td><td>{row['created_at']}</td></tr>"
+                    html += f"""<tr>
+                        <td>{row['id']}</td>
+                        <td>{row['wallet_address'] or '-'}</td>
+                        <td>{row['username']}</td>
+                        <td>{row['email']}</td>
+                        <td>{row['role']}</td>
+                        <td>{row['created_at']}</td>
+                        <td><a href="/dex_1/edit_user?id={row['id']}">✏️ ویرایش</a></td>
+                    </tr>"""
                 html += """</tbody></table><br><a href="/dex_1/">🔙 بازگشت به خانه</a></div></body></html>"""
                 return (html, 200, {"Content-Type": "text/html; charset=utf-8"})
             finally:
@@ -199,17 +212,69 @@ def route(path, method, body):
                 pools = cur.fetchall()
                 html = """<!DOCTYPE html><html dir="rtl" lang="fa"><head><meta charset="UTF-8"><title>مدیریت استخرها</title>
                 <link rel="stylesheet" href="/static/css/main.css"><style>.data-table{width:100%;border-collapse:collapse;margin:20px 0;direction:rtl}.data-table th,.data-table td{border:1px solid #ddd;padding:10px;text-align:right}.data-table th{background-color:#2a2e3a;color:white}</style></head>
-                <body><div class="dex-container"><h2>💧 استخرهای نقدینگی</h2><table class="data-table"><thead><tr><th>ID</th><th>نماد توکن1</th><th>نماد توکن2</th><th>نرخ اولیه</th><th>نقدینگی اولیه</th><th>سازنده</th><th>وضعیت</th><th>زمان ایجاد</th></tr></thead><tbody>"""
+                <body><div class="dex-container"><h2>💧 استخرهای نقدینگی</h2><table class="data-table"><thead><tr><th>ID</th><th>نماد توکن1</th><th>نماد توکن2</th><th>نرخ اولیه</th><th>نقدینگی اولیه</th><th>سازنده</th><th>وضعیت</th><th>زمان ایجاد</th><th>عملیات</th></tr></thead><tbody>"""
                 for row in pools:
                     status = "فعال" if row['is_active'] else "غیرفعال"
-                    html += f"<tr><td>{row['id']}</td><td>{row['token0_symbol'] or '-'}</td><td>{row['token1_symbol'] or '-'}</td><td>{row['initial_rate']}</td><td>{row['initial_liquidity'] or '-'}</td><td>{row['creator_wallet'] or '-'}</td><td>{status}</td><td>{row['created_at']}</td></tr>"
+                    html += f"""<tr>
+                        <td>{row['id']}</td>
+                        <td>{row['token0_symbol'] or '-'}</td>
+                        <td>{row['token1_symbol'] or '-'}</td>
+                        <td>{row['initial_rate']}</td>
+                        <td>{row['initial_liquidity'] or '-'}</td>
+                        <td>{row['creator_wallet'] or '-'}</td>
+                        <td>{status}</td>
+                        <td>{row['created_at']}</td>
+                        <td><a href="/dex_1/edit_pool?id={row['id']}">✏️ ویرایش</a></td>
+                    </tr>"""
                 html += """</tbody></table><br><a href="/dex_1/">🔙 بازگشت به خانه</a></div></body></html>"""
                 return (html, 200, {"Content-Type": "text/html; charset=utf-8"})
             finally:
                 if conn:
                     conn.close()
 
-        # API دریافت استخرها (برای کاتالوگ) - اینجا باید باشد!
+        # API دریافت یک کاربر
+        elif path.startswith("/api/user/"):
+            user_id = path.split("/")[-1]
+            if not user_id.isdigit():
+                return error_response(400, "شناسه کاربر نامعتبر")
+            conn = None
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT id, wallet_address, username, email, role FROM users WHERE id = ?", (int(user_id),))
+                user = cur.fetchone()
+                if not user:
+                    return error_response(404, "کاربر یافت نشد")
+                return success_response(dict(user))
+            except sqlite3.Error as e:
+                return error_response(500, f"خطای دیتابیس: {str(e)}")
+            finally:
+                if conn:
+                    conn.close()
+
+        # API دریافت یک استخر
+        elif path.startswith("/api/pool/"):
+            pool_id = path.split("/")[-1]
+            if not pool_id.isdigit():
+                return error_response(400, "شناسه استخر نامعتبر")
+            conn = None
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+                cur.execute(
+                    "SELECT * FROM liquidity_pools WHERE id = ?", (int(pool_id),))
+                pool = cur.fetchone()
+                if not pool:
+                    return error_response(404, "استخر یافت نشد")
+                return success_response(dict(pool))
+            except sqlite3.Error as e:
+                return error_response(500, f"خطای دیتابیس: {str(e)}")
+            finally:
+                if conn:
+                    conn.close()
+
+        # API دریافت لیست استخرها (برای کاتالوگ)
         elif path == "/api/pools":
             conn = None
             try:
@@ -235,26 +300,6 @@ def route(path, method, body):
                         "created_at": r["created_at"]
                     })
                 return success_response(pools)
-            except sqlite3.Error as e:
-                return error_response(500, f"خطای دیتابیس: {str(e)}")
-            finally:
-                if conn:
-                    conn.close()
-                # API دریافت یک کاربر با شناسه
-        elif path.startswith("/api/user/"):
-            user_id = path.split("/")[-1]
-            if not user_id.isdigit():
-                return error_response(400, "شناسه کاربر نامعتبر")
-            conn = None
-            try:
-                conn = get_db_connection()
-                cur = conn.cursor()
-                cur.execute(
-                    "SELECT id, wallet_address, username, email, role FROM users WHERE id = ?", (int(user_id),))
-                user = cur.fetchone()
-                if not user:
-                    return error_response(404, "کاربر یافت نشد")
-                return success_response(dict(user))
             except sqlite3.Error as e:
                 return error_response(500, f"خطای دیتابیس: {str(e)}")
             finally:
@@ -373,7 +418,7 @@ def route(path, method, body):
             finally:
                 if conn:
                     conn.close()
-            # API ویرایش کاربر
+
         elif path == "/api/update_user":
             try:
                 data = json.loads(body) if body else {}
@@ -412,6 +457,55 @@ def route(path, method, body):
                 """, (wallet, username, email, role, int(user_id)))
                 conn.commit()
                 return success_response({"status": "success", "message": "ویرایش کاربر موفق"})
+            except sqlite3.Error as e:
+                return error_response(500, f"خطای دیتابیس: {str(e)}")
+            finally:
+                if conn:
+                    conn.close()
+
+        elif path == "/api/update_pool":
+            try:
+                data = json.loads(body) if body else {}
+            except json.JSONDecodeError:
+                return error_response(400, "JSON نامعتبر")
+
+            pool_id = data.get("id")
+            token0 = (data.get("token0_address") or "").strip()
+            token1 = (data.get("token1_address") or "").strip()
+            initial_rate = (data.get("initial_rate") or "").strip()
+            initial_liquidity = (data.get("initial_liquidity") or "").strip()
+            symbol0 = (data.get("token0_symbol") or "").strip()
+            symbol1 = (data.get("token1_symbol") or "").strip()
+            is_active = data.get("is_active", 1)
+            creator_wallet = (data.get("creator_wallet") or "").strip()
+            creator_wallet = creator_wallet if creator_wallet else None
+
+            if not pool_id or not token0 or not token1 or not initial_rate:
+                return error_response(400, "پارامترهای ضروری وارد نشده")
+
+            conn = None
+            try:
+                conn = get_db_connection()
+                cur = conn.cursor()
+
+                # اگر ولت داده شده، چک کن که کاربر وجود داشته باشد
+                if creator_wallet:
+                    cur.execute(
+                        "SELECT wallet_address FROM users WHERE wallet_address = ?", (creator_wallet,))
+                    if not cur.fetchone():
+                        return error_response(403, "کاربر با این آدرس ولت یافت نشد")
+
+                cur.execute("""
+                    UPDATE liquidity_pools 
+                    SET token0_address = ?, token1_address = ?, token0_symbol = ?, token1_symbol = ?,
+                        initial_rate = ?, initial_liquidity = ?, creator_wallet = ?, is_active = ?
+                    WHERE id = ?
+                """, (token0, token1, symbol0 or None, symbol1 or None, initial_rate,
+                      initial_liquidity or None, creator_wallet, is_active, int(pool_id)))
+                conn.commit()
+                if cur.rowcount == 0:
+                    return error_response(404, "استخر یافت نشد")
+                return success_response({"status": "success", "message": "ویرایش استخر موفق"})
             except sqlite3.Error as e:
                 return error_response(500, f"خطای دیتابیس: {str(e)}")
             finally:

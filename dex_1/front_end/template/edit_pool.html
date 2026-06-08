@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش کاربر | Ez Dex</title>
+    <title>ویرایش استخر | Ez Dex</title>
     <link rel="stylesheet" href="/dex_1/static/css/main.css">
-    <link rel="stylesheet" href="/dex_1/static/css/register.css">
+    <link rel="stylesheet" href="/dex_1/static/css/create_pool.css">
     <style>
-        .register-card {
+        .pool-card {
             max-width: 600px;
             margin: 0 auto;
         }
@@ -27,7 +27,7 @@
 
 <body>
     <div class="dex-container">
-        <!-- هدر یکسان با بقیه صفحات -->
+        <!-- هدر یکسان -->
         <header class="dex-header">
             <div class="logo">
                 <span></span>
@@ -39,7 +39,6 @@
                 <a href="/dex_1/register">📝 ثبت‌نام</a>
                 <a href="/dex_1/create_pool">➕ استخر جدید</a>
                 <a href="/dex_1/catalog">🛒 کاتالوگ</a>
-                <a href="/dex_1/edit_user"class = "active"> ویرایش کاربر</a>
             </nav>
             <button class="connect-wallet-btn" onclick="alert('اتصال ولت در این صفحه ضروری نیست')">
                 <span>🔗</span> <span>اتصال کیف پول</span>
@@ -47,35 +46,50 @@
         </header>
 
         <main>
-            <div class="register-card">
-                <div class="card-title">
-                    <h2>✏️ ویرایش کاربر</h2>
-                    <p>شناسه کاربر: <strong id="userIdDisplay">---</strong></p>
+            <div class="pool-card">
+                <div class="title">
+                    <h2>✏️ ویرایش استخر نقدینگی</h2>
+                    <p>شناسه استخر: <strong id="poolIdDisplay">---</strong></p>
                 </div>
                 <div id="loadingMsg" class="loading">در حال بارگیری اطلاعات...</div>
 
                 <form id="editForm" style="display: none;">
-                    <input type="hidden" id="userId">
+                    <input type="hidden" id="poolId">
 
                     <div class="field">
-                        <label>👤 نام کاربری <span class="required">*</span></label>
-                        <input type="text" id="username" required>
+                        <label>🪙 آدرس توکن اول <span class="required">*</span></label>
+                        <input type="text" id="token0" required>
                     </div>
                     <div class="field">
-                        <label>📧 ایمیل <span class="required">*</span></label>
-                        <input type="email" id="email" required>
+                        <label>🪙 آدرس توکن دوم <span class="required">*</span></label>
+                        <input type="text" id="token1" required>
                     </div>
                     <div class="field">
-                        <label>🎭 نوع حساب</label>
-                        <select id="role">
-                            <option value="user">کاربر عادی</option>
-                            <option value="liquidity_provider">تأمین‌کننده نقدینگی</option>
-                            <option value="trader">معامله‌گر حرفه‌ای</option>
+                        <label>💰 نرخ اولیه <span class="required">*</span></label>
+                        <input type="text" id="initialRate" required>
+                    </div>
+                    <div class="field">
+                        <label>💧 نقدینگی اولیه</label>
+                        <input type="text" id="initialLiquidity">
+                    </div>
+                    <div class="field">
+                        <label>🏷️ نماد توکن اول</label>
+                        <input type="text" id="symbol0">
+                    </div>
+                    <div class="field">
+                        <label>🏷️ نماد توکن دوم</label>
+                        <input type="text" id="symbol1">
+                    </div>
+                    <div class="field">
+                        <label>🔗 آدرس ولت سازنده</label>
+                        <input type="text" id="creatorWallet" placeholder="0x...">
+                    </div>
+                    <div class="field">
+                        <label>وضعیت</label>
+                        <select id="isActive">
+                            <option value="1">فعال</option>
+                            <option value="0">غیرفعال</option>
                         </select>
-                    </div>
-                    <div class="field">
-                        <label>🔗 آدرس کیف پول (اختیاری)</label>
-                        <input type="text" id="walletAddress" placeholder="0x...">
                     </div>
                     <button type="submit" class="btn-submit">💾 ذخیره تغییرات</button>
                     <div id="formStatus" class="status-message"></div>
@@ -96,25 +110,31 @@
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
-        const userId = urlParams.get('id') || 1;
+        const poolId = urlParams.get('id') || 1;
 
-        document.getElementById('userId').value = userId;
-        document.getElementById('userIdDisplay').textContent = userId;
+        document.getElementById('poolId').value = poolId;
+        document.getElementById('poolIdDisplay').textContent = poolId;
 
-        async function loadUser() {
+        async function loadPool() {
             const loading = document.getElementById('loadingMsg');
             const form = document.getElementById('editForm');
             try {
-                const res = await fetch(`/dex_1/api/user/${userId}`);
+                const res = await fetch(`/dex_1/api/pool/${poolId}`);
                 if (!res.ok) {
                     const err = await res.json();
                     throw new Error(err.error || 'خطا در دریافت اطلاعات');
                 }
-                const user = await res.json();
-                document.getElementById('username').value = user.username || '';
-                document.getElementById('email').value = user.email || '';
-                document.getElementById('role').value = user.role || 'user';
-                document.getElementById('walletAddress').value = user.wallet_address || '';
+                const pool = await res.json();
+
+                document.getElementById('token0').value = pool.token0_address || '';
+                document.getElementById('token1').value = pool.token1_address || '';
+                document.getElementById('initialRate').value = pool.initial_rate || '';
+                document.getElementById('initialLiquidity').value = pool.initial_liquidity || '';
+                document.getElementById('symbol0').value = pool.token0_symbol || '';
+                document.getElementById('symbol1').value = pool.token1_symbol || '';
+                document.getElementById('creatorWallet').value = pool.creator_wallet || '';
+                document.getElementById('isActive').value = pool.is_active ? '1' : '0';
+
                 loading.style.display = 'none';
                 form.style.display = 'block';
             } catch (err) {
@@ -127,28 +147,30 @@
             const statusDiv = document.getElementById('formStatus');
             const submitBtn = e.target.querySelector('button[type="submit"]');
 
-            const username = document.getElementById('username').value.trim();
-            const email = document.getElementById('email').value.trim();
-            const role = document.getElementById('role').value;
-            const wallet = document.getElementById('walletAddress').value.trim();
-
-            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
-                statusDiv.innerHTML = 'نام کاربری نامعتبر';
-                statusDiv.className = 'status-message error';
-                return;
-            }
+            const payload = {
+                id: poolId,
+                token0_address: document.getElementById('token0').value.trim(),
+                token1_address: document.getElementById('token1').value.trim(),
+                initial_rate: document.getElementById('initialRate').value.trim(),
+                initial_liquidity: document.getElementById('initialLiquidity').value.trim() || null,
+                token0_symbol: document.getElementById('symbol0').value.trim() || null,
+                token1_symbol: document.getElementById('symbol1').value.trim() || null,
+                creator_wallet: document.getElementById('creatorWallet').value.trim() || null,
+                is_active: parseInt(document.getElementById('isActive').value)
+            };
 
             submitBtn.disabled = true;
             submitBtn.textContent = '⏳ در حال ذخیره...';
+
             try {
-                const res = await fetch('/dex_1/api/update_user', {
+                const res = await fetch('/dex_1/api/update_pool', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: userId, username, email, role, wallet_address: wallet || null })
+                    body: JSON.stringify(payload)
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    statusDiv.innerHTML = '✅ تغییرات ذخیره شد';
+                    statusDiv.innerHTML = '✅ ' + (data.message || 'تغییرات ذخیره شد');
                     statusDiv.className = 'status-message success';
                 } else {
                     statusDiv.innerHTML = '❌ ' + (data.error || 'خطا');
@@ -163,7 +185,7 @@
             }
         });
 
-        loadUser();
+        loadPool();
     </script>
 </body>
 
