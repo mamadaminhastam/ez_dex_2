@@ -124,25 +124,27 @@
                     return;
                 }
                 container.innerHTML = pools.map(pool => `
-                    <div class="pool-card">
-                        <div class="pool-symbols">
-                            <span>🪙 ${pool.token0_symbol}</span>
-                            <span>/</span>
-                            <span>🪙 ${pool.token1_symbol}</span>
+                    <a href="/dex_1/edit_pool?id=${pool.id}" style="text-decoration: none; color: inherit;">
+                        <div class="pool-card">
+                            <div class="pool-symbols">
+                                <span>🪙 ${pool.token0_symbol}</span>
+                                <span>/</span>
+                                <span>🪙 ${pool.token1_symbol}</span>
+                            </div>
+                            <div class="pool-rate">💰 ${pool.rate}</div>
+                            <div class="pool-info">
+                                نقدینگی اولیه: ${pool.liquidity}<br>
+                                سازنده: <span style="font-family:monospace;font-size:0.75rem;">${pool.creator.slice(0, 10)}...</span>
+                            </div>
+                            <div class="pool-footer">
+                                <span class="${pool.is_active ? 'badge' : 'badge inactive'}">
+                                    ${pool.is_active ? 'فعال' : 'غیرفعال'}
+                                </span>
+                                <small class="pool-info">${new Date(pool.created_at).toLocaleDateString('fa-IR')}</small>
+                            </div>
                         </div>
-                        <div class="pool-rate">💰 ${pool.rate}</div>
-                        <div class="pool-info">
-                            نقدینگی اولیه: ${pool.liquidity}<br>
-                            سازنده: <span style="font-family:monospace;font-size:0.75rem;">${pool.creator.slice(0, 10)}...</span>
-                        </div>
-                        <div class="pool-footer">
-                            <span class="${pool.is_active ? 'badge' : 'badge inactive'}">
-                                ${pool.is_active ? 'فعال' : 'غیرفعال'}
-                            </span>
-                            <small class="pool-info">${new Date(pool.created_at).toLocaleDateString('fa-IR')}</small>
-                        </div>
-                    </div>
-                `).join('');
+                    </a>
+                     `).join('');
             } catch (err) {
                 container.innerHTML = '<div class="empty-msg">خطا در بارگذاری اطلاعات</div>';
                 console.error(err);
