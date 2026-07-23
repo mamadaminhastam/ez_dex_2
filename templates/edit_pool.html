@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ویرایش استخر | Ez Dex</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/create_pool.css">
+</head>
+
+<body>
+    <div class="dex-container">
+        <header class="dex-header">
+            <div class="logo"><span>Ez<span class="highlight">Dex</span></span></div>
+            {{ navigation }}
+        </header>
+        <main>
+            <div class="pool-card" style="max-width:600px; margin:0 auto;">
+                <div class="title">
+                    <h1>ویرایش استخر {{ token0_symbol }}/{{ token1_symbol }}</h1>
+                </div>
+                <p style="color:var(--danger)">{{ error }}</p>
+                <form method="POST" action="/edit_pool/{{ id }}">
+                    <input type="hidden" name="_method" value="PUT">
+                    <div class="field"><label>🪙 آدرس توکن اول</label>
+                        <input type="text" name="token0_address" value="{{ token0_address }}" required>
+                    </div>
+                    <div class="field"><label>🪙 آدرس توکن دوم</label>
+                        <input type="text" name="token1_address" value="{{ token1_address }}" required>
+                    </div>
+                    <div class="field"><label>🏷️ نماد اول</label>
+                        <input type="text" name="token0_symbol" value="{{ token0_symbol }}">
+                    </div>
+                    <div class="field"><label>🏷️ نماد دوم</label>
+                        <input type="text" name="token1_symbol" value="{{ token1_symbol }}">
+                    </div>
+                    <div class="field"><label>💰 نرخ اولیه</label>
+                        <input type="text" name="initial_rate" value="{{ initial_rate }}" required>
+                    </div>
+                    <div class="field"><label>💧 نقدینگی</label>
+                        <input type="text" name="initial_liquidity" value="{{ initial_liquidity }}">
+                    </div>
+                    <div class="field"><label>وضعیت</label>
+                        <select name="is_active">
+                            <option value="1" {{ active_selected }}>فعال</option>
+                            <option value="0" {{ inactive_selected }}>غیرفعال</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit">💾 ذخیره</button>
+                </form>
+            </div>
+        </main>
+        <footer class="dex-footer">
+            <p>© 2025 Ez Dex</p>
+        </footer>
+    </div>
+</body>
+
+</html>

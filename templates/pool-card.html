@@ -1,0 +1,17 @@
+<div class="pool-card"
+    style="background:var(--card-bg); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; display:flex; flex-direction:column; gap:0.8rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span>🪙 {{ token0_symbol }}</span>
+        <span>↔️</span>
+        <span>🪙 {{ token1_symbol }}</span>
+    </div>
+    <div style="color:var(--accent);">💰 {{ initial_rate }}</div>
+    <div style="color:var(--text-muted);">نقدینگی: {{ initial_liquidity }}</div>
+    <div style="font-size:0.8rem;">
+        {{#is_active}}<span class="badge"
+            style="background:rgba(72,187,120,0.2); color:var(--success); padding:0.2rem 0.7rem; border-radius:30px;">فعال</span>{{/is_active}}
+        {{^is_active}}<span class="badge"
+            style="background:rgba(245,101,101,0.2); color:var(--danger); padding:0.2rem 0.7rem; border-radius:30px;">غیرفعال</span>{{/is_active}}
+    </div>
+    <a href="/edit_pool/{{ id }}" style="color:var(--primary);">✏️ ویرایش</a>
+</div>
