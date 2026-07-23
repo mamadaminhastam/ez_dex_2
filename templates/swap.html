@@ -1,2 +1,35 @@
-<h1>💱 صفحه تبادل (Swap)</h1>
-<p>این بخش به‌زودی راه‌اندازی می‌شود.</p>
+<div class="register-card" style="max-width:600px; margin:0 auto;">
+    <div class="card-title">
+        <h1>💱 تبادل ارز</h1>
+    </div>
+
+    <form method="POST" action="/swap">
+        <div class="field">
+            <label>🪙 جفت‌ارز</label>
+            <select name="pool_id">
+                {{ pool_options }}
+            </select>
+        </div>
+        <div class="field">
+            <label>📤 از (توکن مبدأ)</label>
+            <select name="from_token">
+                {{ from_token_options }}
+            </select>
+        </div>
+        <div class="field">
+            <label>📥 به (توکن مقصد)</label>
+            <select name="to_token">
+                {{ to_token_options }}
+            </select>
+        </div>
+        <div class="field">
+            <label>💰 مقدار</label>
+            <input type="number" step="any" name="amount" placeholder="مثال: 0.5" required>
+        </div>
+
+        <p style="color:var(--danger)">{{ error }}</p>
+        <p style="color:var(--success)">{{ success }}</p>
+
+        <button type="submit" class="btn-submit">💱 انجام مبادله</button>
+    </form>
+</div>

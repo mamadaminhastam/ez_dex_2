@@ -1,0 +1,22 @@
+<div class="register-card" style="max-width:600px; margin:0 auto;">
+    <div class="card-title">
+        <h1>پروفایل کاربری</h1>
+    </div>
+    <p style="color:var(--danger)">{{ error }}</p>
+    <p style="color:var(--success)">{{ success }}</p>
+    <form method="POST" action="/profile">
+        <div class="field"><label>👤 نام کاربری <span class="required">*</span></label>
+            <input type="text" name="username" value="{{ username }}" required>
+        </div>
+        <div class="field"><label>📧 ایمیل <span class="required">*</span></label>
+            <input type="email" name="email" value="{{ email }}" required>
+        </div>
+        <div class="field"><label>🔒 رمز عبور جدید (در صورت تغییر)</label>
+            <input type="password" name="password">
+        </div>
+        <div class="field"><label>🔒 تکرار رمز عبور جدید</label>
+            <input type="password" name="password_confirm">
+        </div>
+        <button type="submit" class="btn-submit">💾 ذخیره تغییرات</button>
+    </form>
+</div>

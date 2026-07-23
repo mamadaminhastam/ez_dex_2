@@ -12,9 +12,11 @@ def get_nav_html(headers, current_path=""):
     nav += '<a href="/contact">📞 Contact</a>'
     nav += '<a href="/catalog">🛒 Catalog</a>'
 
+
     if user:
         # لینک‌هایی که فقط کاربران وارد‌شده می‌بینند
         nav += '<a href="/swap">💱 Swap</a>'
+        nav += '<a href="/swap-history">📋 History</a>'
 
         # لینک‌های ویژه ادمین
         if user.get('role') == 'admin':
@@ -36,6 +38,8 @@ def get_nav_html(headers, current_path=""):
                 <span class="username">{}{}</span>
             </div>
             <div class="dropdown-menu">
+                <a href="/profile">👤 Profile</a>
+                <a href="/my-pools">⭐ My Pools</a>
                 <a href="/logout">🚪 Logout</a>
             </div>
         </div>
