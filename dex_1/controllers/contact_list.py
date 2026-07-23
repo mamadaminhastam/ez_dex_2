@@ -1,4 +1,4 @@
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def handle():
@@ -7,7 +7,7 @@ def handle():
         conn = get_db_connection()
         cur = conn.cursor()
         cur.execute(
-            "SELECT id, username, email, role, created_at FROM users ORDER BY id")
+            "SELECT id, email, subject, message, user_id, created_at FROM contact_messages ORDER BY created_at DESC")
         return [dict(row) for row in cur.fetchall()]
     finally:
         if conn:

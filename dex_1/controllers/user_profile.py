@@ -1,6 +1,6 @@
 # controllers/user_profile.py
 import hashlib
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def get_user(user_id):

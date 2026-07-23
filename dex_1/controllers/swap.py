@@ -1,5 +1,5 @@
 # controllers/swap.py
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def get_pools():

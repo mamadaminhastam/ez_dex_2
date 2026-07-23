@@ -1,5 +1,5 @@
 # controllers/user_pool_add.py
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def handle(user_id, pool_id):

@@ -1,5 +1,6 @@
 import mimetypes
-import settings
+import re
+import dex_1.settings as settings
 
 
 def render_template(filename, context=None, use_base=True):
@@ -15,6 +16,13 @@ def render_template(filename, context=None, use_base=True):
     for key, value in context.items():
         child_html = child_html.replace(f"{{{{ {key} }}}}", str(value))
 
+    # خودکار افزودن پیشوند پروژه به لینک‌ها و فرم‌های مطلق داخلی
+    prefix = settings.BASE_URL.rstrip('/')
+    if prefix:
+        # فقط صفحاتی که با /dex_1/ شروع نشده‌اند را هدف قرار بده
+        child_html = re.sub(r"(href|action)=([\'\"])\/(?!" + re.escape(prefix.lstrip('/')) + r")",
+                            r"\1=\2" + prefix + r"/", child_html)
+
     # فقط اگر use_base=True باشد و فایل base.html وجود داشته باشد، آن را اعمال کن
     if use_base:
         base_path = settings.TEMPLATE_DIR / "base.html"
@@ -27,6 +35,10 @@ def render_template(filename, context=None, use_base=True):
             base_html = base_html.replace(
                 "{{ extra_head }}", context.get("extra_head", ""))
             base_html = base_html.replace("{{ content }}", child_html)
+            # نیز پیشوند را در base_html اعمال کن
+            if prefix:
+                base_html = re.sub(r"(href|action)=([\'\"])\/(?!" + re.escape(prefix.lstrip('/')) + r")",
+                                   r"\1=\2" + prefix + r"/", base_html)
             return base_html
 
     return child_html

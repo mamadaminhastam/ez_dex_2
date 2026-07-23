@@ -1,8 +1,8 @@
 # core/auth.py
 import uuid
 import sqlite3
-from core.db_utils import get_db_connection
-from core.cookie import get_cookie
+from dex_1.core.db_utils import get_db_connection
+from dex_1.core.cookie import get_cookie
 
 
 def create_session(user_id):
@@ -51,3 +51,17 @@ def require_role(headers, roles):
     if user['role'] not in roles:
         return None
     return user
+
+
+def delete_session(session_id):
+    """حذف رکورد سشن از دیتابیس"""
+    if not session_id:
+        return
+    conn = None
+    try:
+        conn = get_db_connection()
+        conn.execute("DELETE FROM sessions WHERE id = ?", (session_id,))
+        conn.commit()
+    finally:
+        if conn:
+            conn.close()

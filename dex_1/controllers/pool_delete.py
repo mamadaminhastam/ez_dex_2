@@ -1,5 +1,5 @@
 # controllers/pool_delete.py
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def handle(pool_id):

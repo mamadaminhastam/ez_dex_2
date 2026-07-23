@@ -1,6 +1,6 @@
 import hashlib
-from core.db_utils import get_db_connection
-from core import auth
+from dex_1.core.db_utils import get_db_connection
+from dex_1.core import auth
 
 
 def handle(data):

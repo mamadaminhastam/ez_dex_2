@@ -1,5 +1,5 @@
 import sqlite3
-from core.db_utils import get_db_connection
+from dex_1.core.db_utils import get_db_connection
 
 
 def handle(data, user_id=None):
