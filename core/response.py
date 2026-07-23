@@ -2,15 +2,34 @@ import mimetypes
 import settings
 
 
-def render_template(filename, context=None):
-    template_path = settings.TEMPLATE_DIR / filename
-    if not template_path.exists():
+def render_template(filename, context=None, use_base=True):
+    if context is None:
+        context = {}
+
+    child_path = settings.TEMPLATE_DIR / filename
+    if not child_path.exists():
         return None
-    html = template_path.read_text(encoding="utf-8")
-    if context:
-        for key, value in context.items():
-            html = html.replace(f"{{{{ {key} }}}}", str(value))
-    return html
+    child_html = child_path.read_text(encoding="utf-8")
+
+    # جایگزینی متغیرها در قالب فرزند
+    for key, value in context.items():
+        child_html = child_html.replace(f"{{{{ {key} }}}}", str(value))
+
+    # فقط اگر use_base=True باشد و فایل base.html وجود داشته باشد، آن را اعمال کن
+    if use_base:
+        base_path = settings.TEMPLATE_DIR / "base.html"
+        if base_path.exists():
+            base_html = base_path.read_text(encoding="utf-8")
+            base_html = base_html.replace(
+                "{{ navigation }}", context.get("navigation", ""))
+            base_html = base_html.replace(
+                "{{ title }}", context.get("title", "Ez Dex"))
+            base_html = base_html.replace(
+                "{{ extra_head }}", context.get("extra_head", ""))
+            base_html = base_html.replace("{{ content }}", child_html)
+            return base_html
+
+    return child_html
 
 
 def serve_static_file(path):

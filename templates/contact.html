@@ -1,45 +1,19 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تماس با ما | Ez Dex</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/css/contact_us.css">
-</head>
-
-<body>
-    <div class="dex-container">
-        <header class="dex-header">
-            <div class="logo"><span>Ez<span class="highlight">Dex</span></span></div>
-            {{ navigation }}
-        </header>
-        <main>
-            <div class="contact-card">
-                <div class="card-header">
-                    <div class="icon">✉️</div>
-                    <h1>ارسال پیام</h1>
-                </div>
-                <p style="color:var(--danger)">{{ error }}</p>
-                <form method="POST" action="/contact">
-                    <div class="input-group"><label>📧 ایمیل <span class="required">*</span></label>
-                        <input type="email" name="email" required>
-                    </div>
-                    <div class="input-group"><label>🏷️ موضوع <span class="required">*</span></label>
-                        <input type="text" name="subject" required>
-                    </div>
-                    <div class="input-group"><label>💬 پیام <span class="required">*</span></label>
-                        <textarea name="message" rows="5" required></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">📤 ارسال</button>
-                </form>
-            </div>
-        </main>
-        <footer class="dex-footer">
-            <p>© 2025 Ez Dex</p>
-        </footer>
+<div class="contact-card">
+    <div class="card-header">
+        <div class="icon">✉️</div>
+        <h1>ارسال پیام</h1>
     </div>
-</body>
-
-</html>
+    <p style="color:var(--danger)">{{ error }}</p>
+    <form method="POST" action="/contact">
+        <div class="input-group"><label>📧 ایمیل <span class="required">*</span></label>
+            <input type="email" name="email" required>
+        </div>
+        <div class="input-group"><label>🏷️ موضوع <span class="required">*</span></label>
+            <input type="text" name="subject" required>
+        </div>
+        <div class="input-group"><label>💬 پیام <span class="required">*</span></label>
+            <textarea name="message" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">📤 ارسال</button>
+    </form>
+</div>

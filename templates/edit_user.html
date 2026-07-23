@@ -1,47 +1,19 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش کاربر | Ez Dex</title>
-    <link rel="stylesheet" href="/static/css/main.css">
-    <link rel="stylesheet" href="/static/css/register.css">
-</head>
-
-<body>
-    <div class="dex-container">
-        <header class="dex-header">
-            <div class="logo"><span>Ez<span class="highlight">Dex</span></span></div>
-            {{ navigation }}
-        </header>
-        <main>
-            <div class="register-card" style="max-width:600px; margin:0 auto;">
-                <div class="card-title">
-                    <h1>ویرایش کاربر {{ username }}</h1>
-                </div>
-                <p style="color:var(--danger)">{{ error }}</p>
-                <form method="POST" action="/edit_user/{{ id }}">
-                    <input type="hidden" name="_method" value="PUT">
-                    <div class="field"><label>👤 نام کاربری</label>
-                        <input type="text" name="username" value="{{ username }}" required>
-                    </div>
-                    <div class="field"><label>📧 ایمیل</label>
-                        <input type="email" name="email" value="{{ email }}" required>
-                    </div>
-                    <div class="field"><label>🎭 نقش</label>
-                        <select name="role">
-                            {{ role_options }}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-submit">💾 ذخیره تغییرات</button>
-                </form>
-            </div>
-        </main>
-        <footer class="dex-footer">
-            <p>© 2025 Ez Dex</p>
-        </footer>
+<div class="register-card" style="max-width:600px; margin:0 auto;">
+    <div class="card-title">
+        <h1>ویرایش کاربر {{ username }}</h1>
     </div>
-</body>
-
-</html>
+    <p style="color:var(--danger)">{{ error }}</p>
+    <form method="POST" action="/edit_user/{{ id }}">
+        <input type="hidden" name="_method" value="PUT">
+        <div class="field"><label>👤 نام کاربری</label>
+            <input type="text" name="username" value="{{ username }}" required>
+        </div>
+        <div class="field"><label>📧 ایمیل</label>
+            <input type="email" name="email" value="{{ email }}" required>
+        </div>
+        <div class="field"><label>🎭 نقش</label>
+            <select name="role">{{ role_options }}</select>
+        </div>
+        <button type="submit" class="btn-submit">💾 ذخیره تغییرات</button>
+    </form>
+</div>

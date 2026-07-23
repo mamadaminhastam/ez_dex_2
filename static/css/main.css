@@ -232,3 +232,57 @@ body {
         gap: 1rem;
     }
 }
+/* ---------- استایل جداول مدیریتی ---------- */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    direction: rtl;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+    border: 1px solid var(--border);
+    padding: 12px 15px;
+    text-align: right;
+}
+
+.data-table th {
+    background-color: #2a2e3a;
+    color: white;
+    font-weight: 600;
+}
+
+.data-table tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.data-table tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.badge.active {
+    background-color: rgba(72, 187, 120, 0.2);
+    color: var(--success);
+}
+
+.badge.inactive {
+    background-color: rgba(245, 101, 101, 0.2);
+    color: var(--danger);
+}
+
+.badge.deleted {
+    background-color: rgba(150, 150, 150, 0.2);
+    color: #888;
+}
